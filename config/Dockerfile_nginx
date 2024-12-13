@@ -1,7 +1,7 @@
 FROM debian:12-slim
 
-ARG HOSTNAME=log.internal
-ARG IP=192.168.0.1
+ARG SAN_HOSTNAME=log.internal
+ARG SAN_IP=0.0.0.0
 
 USER root
 
@@ -10,6 +10,6 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     openssl ecparam -out /etc/nginx/graylog.key -name prime256v1 -genkey && \
-    openssl req -new -x509 -nodes -key /etc/nginx/graylog.key -out /etc/nginx/graylog.crt -days 3650 -subj "/CN=Graylog Logserver" -addext "subjectAltName = DNS:${HOSTNAME},IP:127.0.0.1,IP:${IP}"
+    openssl req -new -x509 -nodes -key /etc/nginx/graylog.key -out /etc/nginx/graylog.crt -days 3650 -subj "/CN=Graylog Logserver" -addext "subjectAltName = DNS:${SAN_HOSTNAME},IP:127.0.0.1,IP:${SAN_IP}"
 
 CMD ["nginx", "-g", "daemon off;"]

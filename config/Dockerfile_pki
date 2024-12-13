@@ -1,0 +1,91 @@
+FROM debian:12-slim
+
+# see: https://easy-rsa.readthedocs.io/en/latest/
+# docker build --no-cache --network=host -t local/pki  . -f Dockerfile_pki
+
+ARG EASYRSA_VERSION=3.2.1
+ARG PKI_REQ_COUNTRY=AT
+ARG PKI_REQ_PROVINCE=-
+ARG PKI_REQ_CITY=-
+ARG PKI_REQ_ORG="OXL IT Services"
+ARG PKI_REQ_OU=-
+ARG PKI_REQ_EMAIL=contact@oxl.at
+ARG PKI_CA_EXPIRE=7300
+ARG PKI_CERT_EXPIRE=1825
+ARG PKI_ALGO=ec
+ARG PKI_CURVE=secp384r1
+ARG PKI_KEY_SIZE=4096
+ARG PKI_DIGEST=sha256
+
+ENV EASYRSA_PKI=/pki/pki
+ENV EASYRSA_PWD=${EASYRSA_PKI}/.pwd
+ENV PKI_ALGO=${PKI_ALGO}
+
+USER root
+WORKDIR /pki
+
+RUN apt-get update && \
+    apt-get -y --no-install-recommends install openssl tar wget gzip ca-certificates && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    mkdir -p /pki && \
+    cd /tmp &&\
+    wget https://github.com/OpenVPN/easy-rsa/releases/download/v${EASYRSA_VERSION}/EasyRSA-${EASYRSA_VERSION}.tgz && \
+    tar -xzvf EasyRSA-${EASYRSA_VERSION}.tgz -C /pki/ --strip-components=1
+
+RUN echo "set_var EASYRSA \"easyrsa\" \n\
+set_var EASYRSA_PKI \"${EASYRSA_PKI}\" \n\
+set_var EASYRSA_EXT_DIR \"$EASYRSA_PKI/x509-types\" \n\
+set_var EASYRSA_SSL_CONF \"$EASYRSA_PKI/openssl-easyrsa.cnf\" \n\
+set_var EASYRSA_DN \"org\" \n\
+set_var EASYRSA_RAND_SN \"yes\" \n\
+set_var EASYRSA_ALGO ${PKI_ALGO} \n\
+set_var EASYRSA_CURVE ${PKI_CURVE} \n\
+set_var EASYRSA_KEY_SIZE ${PKI_KEY_SIZE} \n\
+set_var EASYRSA_DIGEST \"${PKI_DIGEST}\" \n\
+set_var EASYRSA_CA_EXPIRE ${PKI_CA_EXPIRE} \n\
+set_var EASYRSA_CERT_EXPIRE ${PKI_CERT_EXPIRE} \n\
+set_var EASYRSA_REQ_COUNTRY \"${PKI_REQ_COUNTRY}\" \n\
+set_var EASYRSA_REQ_PROVINCE \"${PKI_REQ_PROVINCE}\" \n\
+set_var EASYRSA_REQ_CITY \"${PKI_REQ_CITY}\" \n\
+set_var EASYRSA_REQ_ORG \"${PKI_REQ_ORG}\" \n\
+set_var EASYRSA_REQ_OU \"${PKI_REQ_OU}\" \n\
+set_var EASYRSA_REQ_EMAIL \"${PKI_REQ_EMAIL}\"" > /pki/vars
+
+RUN echo "#!/bin/bash \n\
+set -eo pipefail \n\
+if [ ! -f \"\$EASYRSA_PWD\" ]; then \n\
+  if [ -n \"\${PKI_SECRET}\" ] && [[ \${#PKI_SECRET} -gt 12 ]]; then \n\
+    echo \"\${PKI_SECRET}\" > ${EASYRSA_PWD} \n\
+  else \n\
+    tr -dc \"A-Za-z0-9*+,-:;<=>@\" </dev/urandom | head -c 30 > ${EASYRSA_PWD} && chmod 600 ${EASYRSA_PWD} \n\
+  fi \n\
+fi \n\
+if [ ! -f \"\${EASYRSA_PKI}/ca.crt\" ]; then \n\
+  SECRET=\"\$(cat \"\$EASYRSA_PWD\")\" \n\
+  export EASYRSA_PASSIN=\"pass:\${SECRET}\" \n\
+  export EASYRSA_PASSOUT=\"pass:\${SECRET}\" \n\
+  /pki/easyrsa --vars=/pki/vars --batch init-pki soft \n\
+  EASYRSA_REQ_CN=\"Logserver CA\" /pki/easyrsa --vars=/pki/vars --batch --no-text build-ca \n\
+  /pki/easyrsa --vars=/pki/vars --batch gen-crl \n\
+fi" > /pki/init.sh && \
+    chmod +x /pki/init.sh
+
+RUN echo "#!/bin/bash \n\
+set -euo pipefail \n\
+if [ ! -f \"\$EASYRSA_PWD\" ]; then \n\
+  echo \"ERROR: PKI not initialized!\" \n\
+  exit 1 \n\
+fi \n\
+SECRET=\"\$(cat \"\$EASYRSA_PWD\")\" \n\
+export EASYRSA_PASSIN=\"pass:\${SECRET}\" \n\
+export EASYRSA_PASSOUT=\"pass:\${SECRET}\" \n\
+/pki/easyrsa \"\$@\" \n\
+if echo \"\$@\" | grep -q 'build'; then \n\
+  crt=\"\$(ls -Art \"\${EASYRSA_PKI}/issued/\" | tail -n 1)\" \n\
+  crt_path=\"\${EASYRSA_PKI}/private/\${crt::-4}\" \n\
+  openssl ${PKI_ALGO} --passin=\"pass:\${SECRET}\" -in \"\${crt_path}.key\" -out \"\${crt_path}.nopw.key\" \n\
+fi" > /pki/pki.sh && \
+    chmod +x /pki/pki.sh
+
+CMD ["/pki/init.sh"]

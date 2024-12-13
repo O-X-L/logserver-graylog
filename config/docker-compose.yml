@@ -59,6 +59,10 @@ services:
     build:
       context: .
       dockerfile: 'Dockerfile_nginx'
+      args:
+        # for the snakeoil certificate SAN
+        SAN_HOSTNAME: 'log.internal'
+        SAN_IP: '0.0.0.0'
     environment:
       PIDFile: '/run/nginx.pid'
     ports:
@@ -99,7 +103,34 @@ services:
       # todo: add additional ports if needed
     volumes:
         - '/usr/share/graylog/data/config/graylog.conf:/usr/share/graylog/data/config/graylog.conf:ro'
+        - '/usr/share/graylog/data/ssl:/usr/share/graylog/data/ssl:ro'
         - '/usr/share/graylog/data:/usr/share/graylog/data'
     restart: 'always'
     networks:
       - 'log'
+
+  pki:
+    container_name: 'log-pki'
+    image: 'local/pki:latest'
+    build:
+      context: .
+      dockerfile: 'Dockerfile_pki'
+      args:
+        PKI_CA_EXPIRE: 7300  # 20y
+        PKI_CERT_EXPIRE: 1825  # 5y
+        PKI_ALGO: 'ec'
+        PKI_CURVE: 'secp384r1'
+        PKI_KEY_SIZE: '4096'
+        PKI_DIGEST: 'sha256'
+        # todo: update infos; warning: invalid country-codes etc. will produce errors
+        PKI_REQ_COUNTRY: 'AT'
+        PKI_REQ_PROVINCE: '-'
+        PKI_REQ_CITY: '-'
+        PKI_REQ_ORG: 'OXL IT Services'
+        PKI_REQ_OU: '-'
+        PKI_REQ_EMAIL: 'contact@oxl.at'
+    environment:
+        # optionally - if none or len < 12 it will be auto-generated
+        PKI_SECRET: ''
+    volumes:
+      - '/usr/share/log-pki:/pki/pki'

@@ -56,6 +56,7 @@ Place files into `/etc/graylog`:
    * [Dockerfile_opensearch](https://github.com/O-X-L/logserver-graylog/blob/main/config/Dockerfile_opensearch)
    * [Dockerfile_nginx](https://github.com/O-X-L/logserver-graylog/blob/main/config/Dockerfile_nginx)
    * [nginx.conf](https://github.com/O-X-L/logserver-graylog/blob/main/config/nginx.conf)
+   * [Dockerfile_pki](https://github.com/O-X-L/logserver-graylog/blob/main/config/Dockerfile_pki)
 
 ----
 
@@ -77,12 +78,14 @@ useradd --shell /usr/sbin/nologin --uid 1102 --gid 1102 opensearch
 ### 5. Create directories
 
 ```bash
-mkdir -p /usr/share/graylog/data /usr/share/graylog/data/config
+mkdir -p /usr/share/graylog/data /usr/share/graylog/data/config /usr/share/graylog/data/ssl
 chown -R graylog:graylog /usr/share/graylog
 mkdir -p /usr/share/opensearch/config /usr/share/opensearch/data
 chown -R opensearch:opensearch /usr/share/opensearch
 mkdir -p /usr/share/mongodb
 chown -R mongodb:mongodb /usr/share/mongodb
+mkdir -p /usr/share/log-pki
+chmod 700 /usr/share/log-pki
 ```
 
 ----
@@ -151,6 +154,63 @@ curl -XPUT "http://localhost:9200/_cluster/settings" -H 'Content-Type: applicati
 apt install net-tools
 netstat -tulpn
 ```
+
+----
+
+## Certificates
+
+The `log-pki` (*Public-Key-Infrastructure*) container can be used to generate certificates that are needed for encrypted log-forwarding.
+
+### Server
+
+Generate the certificate:
+
+```bash
+CMD="/pki/pki.sh --no-text --batch --subject-alt-name='DNS:logserver.intern,IP:192.168.0.10' build-server-full logserver nopass"
+docker run --rm -v /usr/share/log-pki:/pki/pki -it local/pki $CMD
+```
+
+Copy the key/cert pair to a directory graylog can read:
+
+```bash
+cp /usr/share/log-pki/ca.crt /usr/share/graylog/data/ssl/
+cp /usr/share/log-pki/issued/logserver.crt /usr/share/graylog/data/ssl/
+cp /usr/share/log-pki/issued/logserver.nopw.key /usr/share/graylog/data/ssl/
+```
+
+Then you can use it for your inputs.
+
+----
+
+### Client
+
+Generate the certificate:
+
+```bash
+CMD="/pki/pki.sh --no-text --batch build-client-full <NAME> nopass"
+docker run --rm -v /usr/share/log-pki:/pki/pki -it local/pki $CMD
+```
+
+Then move the files to your client-system:
+
+* `/usr/share/log-pki/ca.crt`
+* `/usr/share/log-pki/issued/<NAME>.crt`
+* `/usr/share/log-pki/private/<NAME>.nopw.key`
+
+Make sure your client validates the server-certificate by the provided `ca.crt`!
+
+----
+
+### Renewal
+
+Remove an existing certificate:
+
+```bash
+CMD='/pki/pki.sh --batch --no-text revoke <NAME>'
+docker run --rm -v /usr/share/log-pki:/pki/pki -it local/pki $CMD
+```
+
+Then simply re-generate it as seen above.
 
 ----
 
