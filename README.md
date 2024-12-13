@@ -100,8 +100,8 @@ chown -R mongodb:mongodb /usr/share/mongodb
 * `ln -s /usr/share/graylog/data/config /etc/graylog/server`
 * Place graylog config file into `/etc/graylog/server`
   * [graylog.conf](https://github.com/O-X-L/logserver-graylog/blob/main/config/server/graylog.conf)
-    * Add a long secret-string
-    * Generate graylog admin-hash and add it to the config: `echo 'PASSWORD' | tr -d '\n' | sha256sum | cut -d " " -f1`
+    * Add a long `password_secret`
+    * Generate graylog admin-hash and add it to the config as `root_password_sha2`: `echo 'PASSWORD' | tr -d '\n' | sha256sum | cut -d " " -f1`
 
 ----
 
