@@ -20,7 +20,7 @@ This guide works on a clean [Debian netinstall](https://www.debian.org/CD/netins
 
 Make sure to use a dedicated partition (*LVM*) or a dedicated virtual-disk if ran as VM mounted at `/usr/share/opensearch` to save the log-data to.
 
-If you want/need to create index-snapshots - you might also want to use a dedicated one mounted at `/usr/share/opensearch/backup`.
+If you want/need to [create index-snapshots](https://opensearch.org/docs/latest/tuning-your-cluster/availability-and-recovery/snapshots/snapshot-restore/) - you might also want to use a dedicated one mounted at `/usr/share/opensearch/backup`.
 
 ----
 
@@ -88,6 +88,7 @@ mkdir -p /usr/share/mongodb
 chown -R mongodb:mongodb /usr/share/mongodb
 mkdir -p /usr/share/log-pki
 chmod 700 /usr/share/log-pki
+chmod 750 /usr/share/graylog /usr/share/opensearch /usr/share/mongodb
 ```
 
 ----
@@ -177,7 +178,7 @@ Copy the key/cert pair to a directory graylog can read:
 ```bash
 cp /usr/share/log-pki/ca.crt /usr/share/graylog/data/ssl/
 cp /usr/share/log-pki/issued/logserver.crt /usr/share/graylog/data/ssl/
-cp /usr/share/log-pki/issued/logserver.nopw.key /usr/share/graylog/data/ssl/
+cp /usr/share/log-pki/private/logserver.nopw.key /usr/share/graylog/data/ssl/
 chmod 400 /usr/share/graylog/data/ssl/*
 chown graylog /usr/share/graylog/data/ssl/*
 ```
