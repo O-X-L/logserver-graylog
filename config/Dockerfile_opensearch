@@ -1,0 +1,11 @@
+FROM opensearchproject/opensearch:2
+USER root
+RUN groupmod --gid 1102 opensearch; \
+        usermod --uid 1102 opensearch; \
+        chown -R opensearch:opensearch /usr/share/opensearch
+
+# optionally - you could remove or add plugins:
+#   RUN /usr/share/opensearch/bin/opensearch-plugin remove {{ plugin }}
+#   RUN /usr/share/opensearch/bin/opensearch-plugin install {{ plugin }}
+
+USER opensearch

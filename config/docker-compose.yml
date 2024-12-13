@@ -1,0 +1,105 @@
+---
+
+networks:
+  log:
+    driver: 'bridge'
+
+services:
+  mongodb:
+    hostname: 'mongodb'
+    container_name: 'log-mongodb'
+    image: 'local/mongodb:6'  # latest on major version
+    build:
+      context: .
+      dockerfile: 'Dockerfile_mongodb'
+    user: '1101:1101'
+    volumes:
+      - '/usr/share/mongodb:/data/db'
+    ports:
+      - '127.0.0.1:27017:27017/tcp'
+    restart: 'always'
+    networks:
+      - 'log'
+
+  opensearch:
+    hostname: 'opensearch'
+    container_name: 'log-opensearch'
+    image: 'local/opensearch:2'  # latest on major version
+    build:
+      context: .
+      dockerfile: 'Dockerfile_opensearch'
+    user: '1102:1102'
+    environment:
+      UID: 1102
+      GID: 1102
+      # todo: minimal: 8 char, 1 uppercase, 1 lowercase, 1 digit, 1 special-char
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: '<YOUR-SECRET-P93SSW_RD>'
+    ulimits:
+      memlock:
+        hard: -1
+        soft: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - '127.0.0.1:9200:9200'
+    volumes:
+      - '/usr/share/opensearch/data:/usr/share/opensearch/data'
+      - '/var/backups/opensearch:/usr/share/opensearch/backup'
+      - '/usr/share/opensearch/config/opensearch.yml:/usr/share/opensearch/config/opensearch.yml:ro'
+      - '/usr/share/opensearch/config/jvm.options:/usr/share/opensearch/config/jvm.options:ro'
+      - '/usr/share/opensearch/config/log4j2.properties:/usr/share/opensearch/config/log4j2.properties:ro'
+    restart: 'always'
+    networks:
+      - 'log'
+
+  nginx:
+    container_name: 'log-nginx'
+    image: 'local/nginx:latest'
+    build:
+      context: .
+      dockerfile: 'Dockerfile_nginx'
+    environment:
+      PIDFile: '/run/nginx.pid'
+    ports:
+      - '80:80/tcp'
+      - '443:443/tcp'
+    volumes:
+      - '/etc/graylog/nginx.conf:/etc/nginx/sites-enabled/graylog:ro'
+      # todo: set to use valid certificate
+      # - '???:/etc/nginx/graylog.key:ro'
+      # - '???:/etc/nginx/graylog.crt:ro'  # should use the certificate chain => top is server cert; bottom root cert
+    restart: 'always'
+    networks:
+      - 'log'
+
+  graylog:
+    hostname: 'graylog'
+    container_name: 'log-graylog'
+    image: 'graylog/graylog:6.1'  # latest on major version
+    depends_on:
+      - 'mongodb'
+      - 'opensearch'
+    entrypoint: '/usr/bin/tini -- wait-for-it opensearch:9200 --  /docker-entrypoint.sh'
+    user: '1100:1100'
+    environment:
+      UID: 1100
+      GID: 1100
+      GRAYLOG_NODE_ID_FILE: '/usr/share/graylog/data/config/node-id'
+      GRAYLOG_HTTP_BIND_ADDRESS: '0.0.0.0:9000'
+      GRAYLOG_ELASTICSEARCH_HOSTS: 'http://opensearch:9200'
+      GRAYLOG_MONGODB_URI: 'mongodb://mongodb:27017/graylog'
+      GRAYLOG_REPORT_DISABLE_SANDBOX: 'true'
+    ports:
+      - '127.0.0.1:9000:9000/tcp'
+      - '514:514/tcp'  # syslog TCP
+      - '514:514/udp'  # syslog UDP
+      - '12201:12201/udp'  # GELF TCP
+      - '12201:12201/udp'  # GELF UDP
+      # todo: add additional ports if needed
+    volumes:
+        - '/usr/share/graylog/data/config/graylog.conf:/usr/share/graylog/data/config/graylog.conf:ro'
+        - '/usr/share/graylog/data:/usr/share/graylog/data'
+    restart: 'always'
+    networks:
+      - 'log'
