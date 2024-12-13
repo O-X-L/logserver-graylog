@@ -166,7 +166,7 @@ The `log-pki` (*Public-Key-Infrastructure*) container can be used to generate ce
 Generate the certificate:
 
 ```bash
-CMD="/pki/pki.sh --no-text --batch --subject-alt-name='DNS:logserver.intern,IP:192.168.0.10' build-server-full logserver nopass"
+CMD="/pki/pki.sh --subject-alt-name='DNS:logserver.intern,IP:192.168.0.10' build-server-full logserver nopass"
 docker run --rm -v /usr/share/log-pki:/pki/pki -it local/pki $CMD
 ```
 
@@ -189,7 +189,7 @@ Then you can use it for your inputs.
 Generate the certificate:
 
 ```bash
-CMD="/pki/pki.sh --no-text --batch build-client-full <NAME> nopass"
+CMD="/pki/pki.sh build-client-full <NAME> nopass"
 docker run --rm -v /usr/share/log-pki:/pki/pki -it local/pki $CMD
 ```
 
@@ -208,7 +208,7 @@ Make sure your client validates the server-certificate by the provided `ca.crt`!
 Remove an existing certificate:
 
 ```bash
-CMD='/pki/pki.sh --batch --no-text revoke <NAME>'
+CMD='/pki/pki.sh revoke <NAME>'
 docker run --rm -v /usr/share/log-pki:/pki/pki -it local/pki $CMD
 ```
 

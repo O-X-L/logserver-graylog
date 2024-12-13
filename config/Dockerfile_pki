@@ -80,7 +80,7 @@ fi \n\
 SECRET=\"\$(cat \"\$EASYRSA_PWD\")\" \n\
 export EASYRSA_PASSIN=\"pass:\${SECRET}\" \n\
 export EASYRSA_PASSOUT=\"pass:\${SECRET}\" \n\
-/pki/easyrsa \"\$@\" \n\
+/pki/easyrsa --batch --no-text \"\$@\" \n\
 if echo \"\$@\" | grep -q 'build'; then \n\
   crt=\"\$(ls -Art \"\${EASYRSA_PKI}/issued/\" | tail -n 1)\" \n\
   crt_path=\"\${EASYRSA_PKI}/private/\${crt::-4}\" \n\
