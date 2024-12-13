@@ -1,6 +1,6 @@
 # Graylog Docker-Compose Setup
 
-![Graylog Logserver Setup](https://raw.githubusercontent.com/O-X-L/logserver-graylog/refs/heads/main/Overview)
+![Graylog Logserver Setup](https://raw.githubusercontent.com/O-X-L/logserver-graylog/refs/heads/main/Overview.svg)
 
 ## Setup Guide
 
