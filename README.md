@@ -4,6 +4,8 @@ This guide covers a single-node setup of [Graylog Open](https://graylog.org/prod
 
 You can also install the Graylog stack without using docker. The most important config files are the same.
 
+For usage with [Ansible](https://www.ansible.com/how-ansible-works/) - use [this role](https://github.com/ansibleguy/sw_graylog).
+
 <a href="https://graylog.org/products/source-available/">
   <img src="https://raw.githubusercontent.com/O-X-L/logserver-graylog/refs/heads/main/Overview.svg" alt="Graylog Stack" width="400px"/>
 </a>
