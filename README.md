@@ -1,7 +1,7 @@
 # Graylog Docker-Compose Setup
 
 <a href="https://graylog.org/products/source-available/">
-  <img src="https://raw.githubusercontent.com/O-X-L/logserver-graylog/refs/heads/main/Overview.svg" alt="Graylog Stack" width="250px"/>
+  <img src="https://raw.githubusercontent.com/O-X-L/logserver-graylog/refs/heads/main/Overview.svg" alt="Graylog Stack" width="350px"/>
 </a>
 
 ## Setup Guide
