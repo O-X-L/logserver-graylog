@@ -176,6 +176,8 @@ Copy the key/cert pair to a directory graylog can read:
 cp /usr/share/log-pki/ca.crt /usr/share/graylog/data/ssl/
 cp /usr/share/log-pki/issued/logserver.crt /usr/share/graylog/data/ssl/
 cp /usr/share/log-pki/issued/logserver.nopw.key /usr/share/graylog/data/ssl/
+chmod 400 /usr/share/graylog/data/ssl/*
+chown graylog /usr/share/graylog/data/ssl/*
 ```
 
 Then you can use it for your inputs.
