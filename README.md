@@ -51,11 +51,11 @@ apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
 Place files into `/etc/graylog`:
 
-   * `docker-compose.yml` => update the `OPENSEARCH_INITIAL_ADMIN_PASSWORD`
-   * `Dockerfile_mongodb`
-   * `Dockerfile_opensearch`
-   * `Dockerfile_nginx`
-   * `nginx.conf`
+   * [docker-compose.yml](https://github.com/O-X-L/logserver-graylog/blob/main/config/docker-compose.yml) => update the `OPENSEARCH_INITIAL_ADMIN_PASSWORD`
+   * [Dockerfile_mongodb](https://github.com/O-X-L/logserver-graylog/blob/main/config/Dockerfile_mongodb)
+   * [Dockerfile_opensearch](https://github.com/O-X-L/logserver-graylog/blob/main/config/Dockerfile_opensearch)
+   * [Dockerfile_nginx](https://github.com/O-X-L/logserver-graylog/blob/main/config/Dockerfile_nginx)
+   * [nginx.conf](https://github.com/O-X-L/logserver-graylog/blob/main/config/nginx.conf)
 
 ----
 
@@ -92,14 +92,14 @@ chown -R mongodb:mongodb /usr/share/mongodb
 **OpenSearch**:
 * `ln -s /usr/share/opensearch/config /etc/graylog/opensearch`
 * Place the opensearch config files into `/etc/graylog/opensearch`
-  * `jvm.options` => update the GB of RAM to use: `-Xms` and `-Xmx`
-  * `log4j2.properties`
-  * `opensearch.yml`
+  * [jvm.options](https://github.com/O-X-L/logserver-graylog/blob/main/config/opensearch/jvm.options) => update the GB of RAM to use: `-Xms` and `-Xmx`
+  * [log4j2.properties](https://github.com/O-X-L/logserver-graylog/blob/main/config/opensearch/log4j2.properties)
+  * [opensearch.yml](https://github.com/O-X-L/logserver-graylog/blob/main/config/opensearch/opensearch.yml)
 
 **Graylog**:
 * `ln -s /usr/share/graylog/data/config /etc/graylog/server`
 * Place graylog config file into `/etc/graylog/server`
-  * `graylog.conf`
+  * [graylog.conf](https://github.com/O-X-L/logserver-graylog/blob/main/config/server/graylog.conf)
     * Add a long secret-string
     * Generate graylog admin-hash and add it to the config: `echo 'PASSWORD' | tr -d '\n' | sha256sum | cut -d " " -f1`
 
