@@ -80,7 +80,7 @@ services:
   graylog:
     hostname: 'graylog'
     container_name: 'log-graylog'
-    image: 'graylog/graylog:6.1'  # latest on major version
+    image: 'graylog/graylog:6.0'  # latest on major version
     depends_on:
       - 'mongodb'
       - 'opensearch'
