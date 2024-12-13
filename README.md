@@ -1,4 +1,8 @@
-# Graylog Docker-Compose Setup
+# Graylog Open Setup
+
+This guide covers a single-node setup of [Graylog Open](https://graylog.org/products/source-available/) by utilizing `docker compose`.
+
+You can also install the Graylog stack without using docker. The most important config files are the same.
 
 <a href="https://graylog.org/products/source-available/">
   <img src="https://raw.githubusercontent.com/O-X-L/logserver-graylog/refs/heads/main/Overview.svg" alt="Graylog Stack" width="350px"/>
