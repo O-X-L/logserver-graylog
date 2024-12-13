@@ -134,3 +134,5 @@ services:
         PKI_SECRET: ''
     volumes:
       - '/usr/share/log-pki:/pki/pki'
+    networks:
+      - 'log'
