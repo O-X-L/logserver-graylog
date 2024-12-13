@@ -263,12 +263,12 @@ docker compose -f "/etc/graylog/docker-compose.yml" pull --quiet --ignore-pull-f
 
 1. Install:
 
-`apt install rsyslog`
+   `apt install rsyslog`
 
 2. For encrypted forwarding:
 
-`apt install rsyslog-gnutls`
+   `apt install rsyslog-gnutls`
 
 3. Add config to `/etc/rsyslog.d/`
 
-[TLS encrypted](https://github.com/O-X-L/logserver-graylog/blob/main/client/rsyslog_tls.conf) or [TCP unencrypted](https://github.com/O-X-L/logserver-graylog/blob/main/client/rsyslog_tcp.conf)
+   [TLS encrypted](https://github.com/O-X-L/logserver-graylog/blob/main/client/rsyslog_tls.conf) or [TCP unencrypted](https://github.com/O-X-L/logserver-graylog/blob/main/client/rsyslog_tcp.conf)
