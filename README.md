@@ -272,3 +272,7 @@ docker compose -f "/etc/graylog/docker-compose.yml" pull --quiet --ignore-pull-f
 3. Add config to `/etc/rsyslog.d/`
 
    [TLS encrypted](https://github.com/O-X-L/logserver-graylog/blob/main/client/rsyslog_tls.conf) or [TCP unencrypted](https://github.com/O-X-L/logserver-graylog/blob/main/client/rsyslog_tcp.conf)
+
+4. Activate it:
+
+   `systemctl restart rsyslog.service`
