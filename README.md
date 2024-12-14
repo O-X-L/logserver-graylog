@@ -12,6 +12,8 @@ For usage with [Ansible](https://www.ansible.com/how-ansible-works/) - use [this
 
 ## Setup Guide
 
+Video: [Deutsch](https://www.youtube.com/watch?v=InskqQZ6LqY)
+
 This guide works on a clean [Debian netinstall](https://www.debian.org/CD/netinst/) installation.
 
 ----
@@ -261,6 +263,8 @@ docker compose -f "/etc/graylog/docker-compose.yml" pull --quiet --ignore-pull-f
 
 ## Windows via NXLog
 
+Video: [Deutsch](https://www.youtube.com/watch?v=aV6HcEUsLqQ)
+
 1. Install NXLog:
 
    [NXLog Community Download](https://nxlog.co/downloads/nxlog-ce#nxlog-community-edition)
@@ -291,6 +295,8 @@ Event Logs to monitor:
 ----
 
 ## Linux via Rsyslog
+
+Video: [Deutsch](https://www.youtube.com/watch?v=_jM_NZhUaew)
 
 1. Install:
 
