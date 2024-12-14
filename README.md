@@ -279,8 +279,8 @@ docker compose -f "/etc/graylog/docker-compose.yml" pull --quiet --ignore-pull-f
 
    QueryList examples:
 
-   * [Windows Server](https://github.com/O-X-L/logserver-graylog/blob/main/clients/nxlog_querylist_example_server.conf)
-   * [Windows Clients](https://github.com/O-X-L/logserver-graylog/blob/main/clients/nxlog_querylist_example_client.conf)
+   * [Windows Server](https://github.com/O-X-L/logserver-graylog/blob/main/clients/nxlog_querylist_example_server.xml)
+   * [Windows Clients](https://github.com/O-X-L/logserver-graylog/blob/main/clients/nxlog_querylist_example_client.xml)
 
 4. Restart the `nxlog` service
 
