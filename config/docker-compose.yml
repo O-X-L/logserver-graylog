@@ -98,7 +98,7 @@ services:
       - '127.0.0.1:9000:9000/tcp'
       - '514:514/tcp'  # syslog TCP
       - '514:514/udp'  # syslog UDP
-      - '12201:12201/udp'  # GELF TCP
+      - '12201:12201/tcp'  # GELF TCP
       - '12201:12201/udp'  # GELF UDP
       # todo: add additional ports if needed
     volumes:
