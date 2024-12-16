@@ -94,6 +94,9 @@ services:
       GRAYLOG_ELASTICSEARCH_HOSTS: 'http://opensearch:9200'
       GRAYLOG_MONGODB_URI: 'mongodb://mongodb:27017/graylog'
       GRAYLOG_REPORT_DISABLE_SANDBOX: 'true'
+      GRAYLOG_TELEMETRY_ENABLED: 'false'
+      # to increase graylog RAM:
+      # GRAYLOG_SERVER_JAVA_OPTS: '-Xms2g -Xmx2g -XX:NewRatio=1 -server -XX:+ResizeTLAB -XX:-OmitStackTraceInFastThrow'
     ports:
       - '127.0.0.1:9000:9000/tcp'
       - '514:514/tcp'  # syslog TCP
