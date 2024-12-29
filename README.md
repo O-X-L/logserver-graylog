@@ -14,7 +14,15 @@ For usage with [Ansible](https://www.ansible.com/how-ansible-works/) - use [this
 
 Video: [Deutsch](https://www.youtube.com/watch?v=InskqQZ6LqY)
 
+### System Requirements
+
 This guide works on a clean [Debian netinstall](https://www.debian.org/CD/netinst/) installation.
+
+Minimal resources I would use:
+
+* 8GB RAM (*2GB Graylog, 4GB OpenSearch*)
+* 4 CPU Cores
+* 20GB of Disk-Space
 
 ----
 
