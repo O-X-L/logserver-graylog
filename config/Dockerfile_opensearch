@@ -4,6 +4,9 @@ RUN groupmod --gid 1102 opensearch; \
         usermod --uid 1102 opensearch; \
         chown -R opensearch:opensearch /usr/share/opensearch
 
+# issue: https://github.com/opensearch-project/OpenSearch/issues/14791
+RUN /usr/share/opensearch/bin/opensearch-plugin remove opensearch-observability
+
 # optionally - you could remove or add plugins:
 #   RUN /usr/share/opensearch/bin/opensearch-plugin remove {{ plugin }}
 #   RUN /usr/share/opensearch/bin/opensearch-plugin install {{ plugin }}

@@ -155,6 +155,19 @@ curl -XPUT "http://localhost:9200/_cluster/settings" -H 'Content-Type: applicati
 
 ----
 
+### 10. Set System-Settings
+
+Set [Linux System-Settings for OpenSearch](https://opensearch.org/docs/latest/quickstart/):
+
+```bash
+sysctl -w vm.swappiness=1
+sysctl -w vm.max_map_count=262144
+```
+
+Also add those to the config file to be persistent: `/etc/sysctl.conf`
+
+----
+
 ## Troubleshooting
 
 1. Check the status of the containers: `docker ps -a`
